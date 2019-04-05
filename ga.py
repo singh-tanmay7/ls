@@ -4,6 +4,61 @@ import openpyxl
 
 from openpyxl import *
 
+from tkinter import *
+from tkinter.filedialog import askopenfilename
+
+import os
+
+root = Tk()
+
+
+
+def printeer(event):
+    print("print fn",azi)
+
+
+def get_file_pre():
+    filename = askopenfilename()            # show an "Open" dialog box and return the path to the selected file
+    file= Label(root,text=filename)
+    global pre
+    pre = filename
+    file.grid(row=5,column=1)
+
+def get_file_pos():
+    filename = askopenfilename()            # show an "Open" dialog box and return the path to the selected file
+    file= Label(root,text=filename)
+    global post 
+    post= filename
+    file.grid(row=5,column=1)    
+    
+
+head= Label(root,text="Landslide model",bg="grey",fg="white")
+head.grid(row=0)
+
+label1= Label(root,text="Azimuth :")
+label2= Label(root,text="Altitude :")
+azi= Entry(root)
+alt= Entry(root)
+
+
+ 
+
+
+label1.grid(row=1,sticky=E)
+label2.grid(row=2,sticky=E)
+azi.grid(row=1,column=1)
+alt.grid(row=2,column=1)
+
+#adding button
+button1 = Button(text="postdtm",fg="red")
+button1.bind("<Button-1>",get_file_pos())
+
+
+
+button2 = Button(text="predtm",fg="blue",command=get_file_pre())
+button1.grid(row=3)
+button2.grid(row=3,column=1)
+
 
 
 #matrix_x variable is for entering the width of matrix
@@ -12,15 +67,18 @@ matrix_x=40
 #matrix_y variable is for entering the height of matrix
 matrix_y=40
 
+print(pre,post)
 #importin predtm and postdtm
-predtm= load_workbook(filename='D:\Study\sem 4\scope\matlb_landslide\postdtm.xlsx')
-postdtm= load_workbook(filename='D:\Study\sem 4\scope\matlb_landslide\predtm.xlsx')
+predtm= load_workbook(filename=pre)
+postdtm= load_workbook(filename=post)
 
-
+ 
 #azimuth
-az=135
+#az=135
 
-a1=100
+#a1=100
+az=azi
+al=alt
 
 ar=np.arange(0,40)
 arx=np.arange(0,matrix_x)
@@ -36,10 +94,10 @@ populations=int(30)
 
 delta = np.zeros(matrix_x,matrix_y,populations)
 for i in range(0,populations):
-	delta[:,:,i]=np.random.rand(matrix_y,matrix_x)*range*2-range
+    delta[:,:,i]=np.random.rand(matrix_y,matrix_x)*range*2-range
 
 for i in range(0,generations):
-	# now_generations_count=i         
+    # now_generations_count=i         
     pctime=0
 
     # pc variable refers to the probability of crossover
@@ -138,7 +196,7 @@ fun=np.median(x)
 bestdtm=predtm+bestrange
 bestrange_filter=nlfilter(bestdtm,[12,12],fun)
 
-	
+    
 for y in range(0,matrix_y):
     for x in range(0,matrix_x):
         if (bestrange_filter[y,x]==0):
@@ -215,8 +273,3 @@ title('estimate result shadow image (B)')
 subplot[3,1,3]
 imshow(mat2gray(new_h)) 
 title('post-event DTM shadow image (C)')
-
-
-
-	
-
